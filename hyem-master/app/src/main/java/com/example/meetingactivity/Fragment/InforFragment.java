@@ -38,7 +38,6 @@ import cz.msebera.android.httpclient.HttpResponse;
  * create an instance of this fragment.
  */
 public class InforFragment extends Fragment implements View.OnClickListener {
-    ImageButton imageButton;
     ListView listNotice2;
     ArrayList<Board> list;
     ShowAdapter adapter;
@@ -47,13 +46,17 @@ public class InforFragment extends Fragment implements View.OnClickListener {
     //URL
     String URL= "http://192.168.0.64:8080/0823/board/board_list.jsp";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    String str;
+
+    Bundle bundle =getArguments();
+
+
+    private  Object mMyData;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static Object OnFragmentInteractionListener;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -63,14 +66,10 @@ public class InforFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        adapter.clear();    //list에 데이터 삭제
-        client.post(URL,response);
-    }
 
-    // TODO: Rename and change types and number of parameters
+
+
+
     public static InforFragment newInstance(String param1, String param2) {
         InforFragment fragment = new InforFragment();
         Bundle args = new Bundle();
@@ -79,7 +78,7 @@ public class InforFragment extends Fragment implements View.OnClickListener {
         fragment.setArguments(args);
         return fragment;
     }
-
+    //프래그먼트가 초기화 될 때 호출 됨
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,23 +87,23 @@ public class InforFragment extends Fragment implements View.OnClickListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
-
     }
-
+    //프래그먼트와 관련되는 뷰 계층을 만들어서 리턴함
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view =inflater.inflate(R.layout.fragment_infor, container, false);
 
-
         listNotice2 = view.findViewById(R.id.listNotice2);
+
         list = new ArrayList<>();
-        adapter= new ShowAdapter(getActivity(),R.layout.list_item,list);
+        adapter= new ShowAdapter(getActivity(),R.layout.list_notice,list);
         client = new AsyncHttpClient();
         response=new HttpResponse(getActivity());
         listNotice2.setAdapter(adapter);
+
+
 
         return view;
     }
@@ -116,6 +115,9 @@ public class InforFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
+
+    //onAttach(Activity) 프래그먼트가 액티비티와 연결될 때 호출 됨
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -126,7 +128,7 @@ public class InforFragment extends Fragment implements View.OnClickListener {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
+    //프래그먼트가 액티비티와 연결을 끊기 바로 전에 호출됨 //+ 각각의 상태를 저장?
     @Override
     public void onDetach() {
         super.onDetach();
@@ -156,6 +158,8 @@ public class InforFragment extends Fragment implements View.OnClickListener {
             this.activity = activity;
         }
         // 통신 시작
+
+        //프래그먼트와 연결된 액티비티가 onStart()되어 사용자에게 프래그먼트가 보일 때 호출
         @Override
         public void onStart() {
             dialog = new ProgressDialog(activity);
@@ -190,9 +194,9 @@ public class InforFragment extends Fragment implements View.OnClickListener {
                     notice.setThumb(temp.getString("thumb"));
                     notice.setEditdate(temp.getString("editdate"));
                     notice.setLev(temp.getInt("lev"));
-
-
-                    adapter.add(notice);
+                    if(notice.getLev()==1){
+                        adapter.add(notice);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -203,5 +207,13 @@ public class InforFragment extends Fragment implements View.OnClickListener {
         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             Toast.makeText(activity, "통신실패"+statusCode, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    //프래그먼트와 연결된 액티비티가 onResume()되어 사용자와 상호작용할 수 있을 때 호출됨
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.clear();    //list에 데이터 삭제
+        client.post(URL,response);
     }
 }
