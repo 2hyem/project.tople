@@ -82,7 +82,7 @@
         <TextView
             android:id="@+id/detail_read_help"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="220dp"
             android:gravity="top"
             android:inputType="textPersonName"
             android:singleLine="true"
@@ -139,25 +139,25 @@
         android:id="@+id/fabLayout_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="100dp"
         android:clipToPadding="false"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="12dp">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_main"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
             app:backgroundTint="@color/colorAccent"
-            app:srcCompat="@drawable/icon_plus2"
-            app:fabCustomSize="70dp"
+            app:fabCustomSize="50dp"
             app:fabSize="auto"
-            app:maxImageSize="20dp"/>
+            app:maxImageSize="20dp"
+            app:srcCompat="@drawable/icon_plus2" />
 
     </LinearLayout>
 
@@ -167,7 +167,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="160dp"
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -185,13 +185,14 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_sub1"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
-            app:srcCompat="@drawable/icon_plus2"
+            app:fabCustomSize="50dp"
             app:fabSize="auto"
-            app:maxImageSize="90dp" />
+            app:maxImageSize="20dp"
+            app:srcCompat="@drawable/icon_plus2" />
 
     </LinearLayout>
 
@@ -201,7 +202,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="170dp"
+        android:layout_marginBottom="220dp"
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -219,13 +220,14 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_sub2"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
-            app:srcCompat="@drawable/icon_plus2"
+            app:fabCustomSize="50dp"
             app:fabSize="auto"
-            app:maxImageSize="90dp"/>
+            app:maxImageSize="20dp"
+            app:srcCompat="@drawable/icon_person" />
 
     </LinearLayout>
 
@@ -235,7 +237,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="230dp"
+        android:layout_marginBottom="280dp"
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -257,8 +259,9 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:clickable="true"
-            app:srcCompat="@drawable/icon_plus2"
+            app:fabCustomSize="50dp"
             app:fabSize="auto"
-            app:maxImageSize="90dp"/>
+            app:maxImageSize="20dp"
+            app:srcCompat="@drawable/write_b" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
