@@ -29,6 +29,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,20 +63,24 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2;
     LinearLayout fabLayout,fabLayout1,fabLayout2,boardLayout;
-    LinearLayout inputLayout;
+    LinearLayout binputLayout;
     TextView textFab1,textFab2;
-    Button bntBack, bntWrite;
-    EditText editTitle,editContent;
-    ListView listNotice;
-    ArrayList<Board> list;
-    BoardAdapter adapter;
+    Button bbntBack, bbntWrite;
+    EditText bSubject,bContent;
+    ListView listNotice,listBoard;
+    ArrayList<Board> list1,list2;
+
     ShowAdapter adapter2;
+    ShowAdapter adapter1;
     //통신용 객체 선언
     AsyncHttpClient client;
     HttpResponse response;
 
-    String URL= "http://192.168.0.64:8080/0823/board/board_insert.jsp";
+    String masterLev="1";
+    String lev="";
 
+
+    String URL= "http://192.168.0.64:8080/0823/board/board_insert.jsp";
     String URLlist= "http://192.168.0.64:8080/0823/board/board_list.jsp";
 
 
@@ -115,7 +120,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       final View view =inflater.inflate(R.layout.fragment_board, container, false);
+        final View view =inflater.inflate(R.layout.fragment_board, container, false);
         //플로팅 액션버튼
         fab=(FloatingActionButton) view.findViewById(R.id.fab);
         fab1=(FloatingActionButton)view.findViewById(R.id.fab1);
@@ -127,31 +132,39 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         fabLayout=view.findViewById(R.id.fabLayout);
         fabLayout1=view.findViewById(R.id.fabLayout1);
         fabLayout2=view.findViewById(R.id.fabLayout2);
-
+        //게시판 레이아웃
         boardLayout=view.findViewById(R.id.boardLayout);
-        inputLayout=view.findViewById(R.id.inputLayout);
-
+        //공지사항 레이아웃
+        //일반게시글 레이아웃
+        binputLayout=view.findViewById(R.id.binputLayout);
 
 
         //공지사항 입력 후 리스트에 추가
         listNotice=view.findViewById(R.id.listNotice);
-        list = new ArrayList<>();
-        adapter=new BoardAdapter(getActivity(),R.layout.list_notice,list);
-        adapter2=new ShowAdapter(getActivity(),R.layout.list_item,list);
+        listBoard=view.findViewById(R.id.listBoard);
+        list1 = new ArrayList<>();
+        list2=new ArrayList<>();
 
-        listNotice.setAdapter(adapter);
-       listNotice.setAdapter(adapter2);
+        adapter1=new ShowAdapter(getActivity(),R.layout.list_notice,list1);
+        adapter2=new ShowAdapter(getActivity(),R.layout.list_item,list2);
+
+        listNotice.setAdapter(adapter1);
+        listBoard.setAdapter(adapter2);
 
 
 
-        bntBack=view.findViewById(R.id.bntBack);
-        bntWrite=view.findViewById(R.id.bntWrite);
 
-        editTitle=view.findViewById(R.id.editTitle);
-        editContent=view.findViewById(R.id.editContent);
+        //게시글
+        bbntBack=view.findViewById(R.id.bbntBack);
+        bbntWrite=view.findViewById(R.id.bbntWrite);
 
-        bntBack.setOnClickListener(this);
-        bntWrite.setOnClickListener(this);
+        bSubject=view.findViewById(R.id.bSubject);
+        bContent=view.findViewById(R.id.bContent);
+
+
+
+        bbntBack.setOnClickListener(this);
+        bbntWrite.setOnClickListener(this);
 
         fab.setOnClickListener(this);
         fab1.setOnClickListener(this);
@@ -164,6 +177,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         adapter2.clear();
+        adapter1.clear();
         client.post(URLlist,response);
     }
 
@@ -196,51 +210,65 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     //이벤트설정
     @Override
     public void onClick(View v) {
-
-
-        Intent intent = new Intent();
-       intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
         switch (v.getId()){
             //플로팅 액션 버튼(+) 눌렀을때
             case R.id.fab:
                 anim();
                 break;
             case R.id.fab1://일반게시글 입력화면으로
+                masterLev="2";
                 anim();
                 boardLayout.setVisibility(View.GONE);
                 fabLayout.setVisibility(View.GONE);
-                inputLayout.setVisibility(View.VISIBLE);
+                binputLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.fab2: //공지사항 입력화면으로  //+모임장 또는 관리자 권한을 가진사람만 보여주게해야함
+                masterLev="1";
                 anim();
-                Toast.makeText(getActivity(),"button2",Toast.LENGTH_SHORT).show();
+                boardLayout.setVisibility(View.GONE);
+                fabLayout.setVisibility(View.GONE);
+                binputLayout.setVisibility(View.VISIBLE);
                 break;
-            case R.id.bntBack: //돌아가기 버튼
-                editTitle.setText("");
-                editContent.setText(""); //입력내용초기화
-                inputLayout.setVisibility(View.GONE);
+            case R.id.bbntBack: //돌아가기 버튼
+                bSubject.setText("");
+                bContent.setText(""); //입력내용초기화
+                binputLayout.setVisibility(View.GONE);
                 boardLayout.setVisibility(View.VISIBLE);
                 fabLayout.setVisibility(View.VISIBLE);
                 break;
-            case  R.id.bntWrite:
-                String subject=editTitle.getText().toString().trim();
-                String content=editContent.getText().toString().trim();
+            case  R.id.bbntWrite: //공지사항입력
+                String subject=bSubject.getText().toString().trim();
+                String content=bContent.getText().toString().trim();
                 String id="1";
                 String moimcode="1";
                 String filename="1";
                 String listnum="2";
                 String thumb="4";
                 String editdate="2";
-                String lev = "4";
+
+                if(masterLev.equals("1")){
+                    lev = "1"; // 공지-1 일반-2
+
+                }else if(masterLev.equals("2")){
+                    lev="2";
+
+                }
+                Toast.makeText(getActivity(),lev,Toast.LENGTH_SHORT).show();
+
+                //입력값이 있으면, 서버로 데이터 전송 및 요청
+                RequestParams params = new RequestParams();
 
                 Board item = new Board();
                 item.setSubject(subject);
                 item.setContent(content);
-                list.add(item);
 
-                //입력값이 있으면, 서버로 데이터 전송 및 요청
-                RequestParams params = new RequestParams();
+                if(masterLev.equals("1")){
+                    list1.add(item);
+                }else if(masterLev.equals("2")){
+                    list2.add(item);
+                }
+
+
 
                 params.put("id",id);
                 params.put("subject",subject);
@@ -251,45 +279,67 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 params.put("thumb",thumb);
                 params.put("editdate",editdate);
                 params.put("lev",lev);
-              //  params.put();
+                System.out.println("lev="+lev);
+                //  params.put();
 
-                client.post(URL,params,response);
+                client.post(URL, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        String strJson = new String(responseBody);
+                        try {
+                            JSONObject json = new JSONObject(strJson);
+                            String rt  = json.getString("rt");
+                            if(rt.equals("OK")){
+                                Toast.makeText(getActivity(),"저장성공",Toast.LENGTH_SHORT).show();
 
+                            }else {
+                                Toast.makeText(getActivity(),"실패",Toast.LENGTH_SHORT).show();
 
-                editTitle.setText("");
-                editContent.setText("");
-                inputLayout.setVisibility(View.GONE);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Toast.makeText(getActivity(), "통신실패"+statusCode, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                bSubject.setText("");
+                bContent.setText("");
+                binputLayout.setVisibility(View.GONE);
                 boardLayout.setVisibility(View.VISIBLE);
                 fabLayout.setVisibility(View.VISIBLE);
                 break;
-
         }
     }
 
 
     //플로팅액션버튼 동작 함수
     public void anim() {
-                if (isFabOpen) {
-                        fab.animate().rotationBy(60);
-                        fab1.startAnimation(fab_close);
-                        fab2.startAnimation(fab_close);
-                        fabLayout1.setVisibility(View.GONE);
-                        fabLayout2.setVisibility(View.GONE);
-                        fab1.setClickable(false);
-                        fab2.setClickable(false);
-                         isFabOpen = false;
-                     } else {
-                    fab.animate().rotationBy(-60);
+        if (isFabOpen) {
+            fab.animate().rotationBy(60);
+            fab1.startAnimation(fab_close);
+            fab2.startAnimation(fab_close);
+            fabLayout1.setVisibility(View.GONE);
+            fabLayout2.setVisibility(View.GONE);
+            fab1.setClickable(false);
+            fab2.setClickable(false);
+            isFabOpen = false;
+        } else {
+            fab.animate().rotationBy(-60);
 
-                         fab1.startAnimation(fab_open);
-                         fab2.startAnimation(fab_open);
-                        fabLayout1.setVisibility(View.VISIBLE);
-                        fabLayout2.setVisibility(View.VISIBLE);
-                         fab1.setClickable(true);
-                         fab2.setClickable(true);
-                         isFabOpen = true;
-                     }
-             }
+            fab1.startAnimation(fab_open);
+            fab2.startAnimation(fab_open);
+            fabLayout1.setVisibility(View.VISIBLE);
+            fabLayout2.setVisibility(View.VISIBLE);
+            fab1.setClickable(true);
+            fab2.setClickable(true);
+            isFabOpen = true;
+        }
+    }
 
 
     public interface OnFragmentInteractionListener {
@@ -323,15 +373,32 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //통신 성공
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
             String strJson = new String(responseBody);
             try {
                 JSONObject json = new JSONObject(strJson);
-                String rt  = json.getString("rt");
-                if(rt.equals("OK")){
-                    Toast.makeText(activity,"저장성공",Toast.LENGTH_SHORT).show();
+                String rt = json.getString("rt");
+                int total = json.getInt("total");
+                JSONArray item = json.getJSONArray("item");
+                for (int i=0; i<item.length(); i++) {
+                    JSONObject temp = item.getJSONObject(i);
+                    Board notice = new Board();
+                    notice.setListnum(temp.getInt("listnum"));
+                    notice.setId(temp.getString("id"));
+                    notice.setMoimcode(temp.getInt("moimcode"));
+                    notice.setSubject(temp.getString("subject"));
+                    notice.setContent(temp.getString("content"));
+                    notice.setFilename(temp.getString("filename"));
+                    notice.setThumb(temp.getString("thumb"));
+                    notice.setEditdate(temp.getString("editdate"));
+                    notice.setLev(temp.getInt("lev"));
 
-                                    }else {
-                    Toast.makeText(activity,"실패",Toast.LENGTH_SHORT).show();
+                    if(notice.getLev()==1){
+                        adapter1.add(notice);
+                    } else {
+                        adapter2.add(notice);
+                    }
+
 
                 }
             } catch (JSONException e) {
