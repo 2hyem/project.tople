@@ -98,7 +98,7 @@ public class Calendar_ReadActivity extends AppCompatActivity implements View.OnC
         fabLayout_sub1.setVisibility(View.GONE);
         fabLayout_sub2.setVisibility(View.GONE);
         fabLayout_sub3.setVisibility(View.GONE);
-        fab_main.animate().rotationBy(60);
+        fab_main.animate().rotationBy(45);
         fabLayout_sub1.animate().translationY(-55);
         fabLayout_sub2.animate().translationY(-100);
         fabLayout_sub3.animate().translationY(-145);
@@ -106,8 +106,7 @@ public class Calendar_ReadActivity extends AppCompatActivity implements View.OnC
 
     private void showFABMenu() {
         isFabOnOff = true;
-        fab_main.animate().rotation(0);
-        fab_main.animate().rotationBy(-60);
+        fab_main.animate().rotationBy(-45);
         fabLayout_sub1.animate().translationY(0);
         fabLayout_sub2.animate().translationY(0);
         fabLayout_sub3.animate().translationY(0);
